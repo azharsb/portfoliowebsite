@@ -1,4 +1,4 @@
-# MYPORTFOLLIO
+# MYPORTFOLIO
 
 This is a modern, full-stack portfolio and services platform designed for developers, freelancers, and agencies to showcase their work, skills, and services. Built with a focus on performance, interactivity, and clean design, HeroHarbor leverages the latest technologies in frontend development.
 
@@ -6,7 +6,7 @@ This is a modern, full-stack portfolio and services platform designed for develo
 
 ## 🚀 Project Overview
 
-MYPORTFOLLIO provides:
+MYPORTFOLIO provides:
 - A visually appealing, responsive portfolio site
 - Animated sections and interactive UI
 - Project filtering and detailed showcases
