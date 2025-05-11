@@ -59,7 +59,7 @@ const AboutSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <div>
               <p className="text-gray-300 mb-6">
-                Founded in 2015, Pixel Pulse began with a simple mission: to create digital experiences that empower businesses to thrive in an ever-evolving digital landscape.
+              DC_Developers  Founded in 2023 and  began with a simple mission: to create digital experiences that empower businesses to thrive in an ever-evolving digital landscape.
               </p>
               <p className="text-gray-300 mb-6">
                 What started as a small team of passionate developers and designers has grown into a full-service digital agency, helping clients around the world transform their digital presence.

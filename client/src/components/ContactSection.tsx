@@ -129,8 +129,8 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Call Us</h3>
-                  <p className="text-gray-400">(123) 456-7890</p>
-                  <p className="text-gray-400">(123) 456-7891</p>
+                  <p className="text-gray-400">(+92)-3174828429</p>
+                  
                 </div>
               </motion.div>
               
@@ -149,8 +149,8 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Email Us</h3>
-                  <p className="text-gray-400">info@pixelpulse.com</p>
-                  <p className="text-gray-400">support@pixelpulse.com</p>
+                  <p className="text-gray-400">muhammadazharhassan410@gmail.com</p>
+                
                 </div>
               </motion.div>
               
@@ -169,8 +169,8 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Location</h3>
-                  <p className="text-gray-400">123 Digital Avenue</p>
-                  <p className="text-gray-400">Silicon Valley, CA 94000</p>
+                  <p className="text-gray-400">Pakistan</p>
+                  <p className="text-gray-400">Punjab,Gujranwala</p>
                 </div>
               </motion.div>
             </div>

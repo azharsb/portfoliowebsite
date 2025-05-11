@@ -118,7 +118,7 @@ const Footer = () => {
           transition={{ delay: 0.5 }}
         >
           <div>
-            &copy; {new Date().getFullYear()} Pixel Pulse. All rights reserved.
+            &copy; {new Date().getFullYear()} DC_Developers. All rights reserved.
           </div>
           <div className="mt-4 md:mt-0">
             Designed with 💚 for the digital age

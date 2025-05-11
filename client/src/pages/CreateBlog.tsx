@@ -15,18 +15,28 @@ const blogSchema = z.object({
   metaDescription: z.string().min(1, "Meta description is required"),
   keywords: z.string().min(1, "Keywords are required"),
   categoryId: z.number().min(1, "Category is required"),
-  published: z.boolean().default(false)
+  published: z.boolean().default(false),
 });
 
 type BlogFormValues = z.infer<typeof blogSchema>;
 
+type Category = {
+  id: number;
+  name: string;
+};
+
 const CreateBlog = () => {
   const { toast } = useToast();
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [newCategory, setNewCategory] = useState("");
 
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm<BlogFormValues>({
-    resolver: zodResolver(blogSchema)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<BlogFormValues>({
+    resolver: zodResolver(blogSchema),
   });
 
   const onSubmit = async (data: BlogFormValues) => {
@@ -34,20 +44,23 @@ const CreateBlog = () => {
       const response = await fetch("/api/blog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) throw new Error("Failed to create blog post");
 
       toast({
         title: "Success",
-        description: "Blog post created successfully"
+        description: data.published
+          ? "Blog post published successfully"
+          : "Blog post saved as draft",
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unknown error occurred";
       toast({
         title: "Error",
-        description: "Failed to create blog post",
-        variant: "destructive"
+        description: message,
+        variant: "destructive",
       });
     }
   };
@@ -55,27 +68,32 @@ const CreateBlog = () => {
   const createCategory = async () => {
     if (!newCategory) return;
     try {
-      const response = await fetch('/api/categories', {
-        method: 'POST',
+      const response = await fetch("/api/categories", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ name: newCategory }),
       });
-      const data = await response.json();
+      const data: Category = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create category');
+        throw new Error(data.name || "Failed to create category");
       }
 
       setCategories([...categories, data]);
-      setNewCategory('');
-      setValue('categoryId', data.id);
-    } catch (error) {
+      setNewCategory("");
+      setValue("categoryId", data.id);
+      toast({
+        title: "Success",
+        description: "Category added successfully",
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unknown error occurred";
       toast({
         title: "Error",
-        description: error.message,
-        variant: "destructive"
+        description: message,
+        variant: "destructive",
       });
     }
   };
@@ -88,36 +106,45 @@ const CreateBlog = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label className="block mb-2">Title</label>
+            <label htmlFor="title" className="block mb-2">Title</label>
             <input
+              id="title"
               {...register("title")}
               className="w-full p-2 bg-[#1a1a1a] rounded"
             />
-            {errors.title && <p className="text-red-500">{errors.title.message}</p>}
+            {errors.title && (
+              <p className="text-red-500">{errors.title.message}</p>
+            )}
           </div>
 
           <div>
-            <label className="block mb-2">Featured Image</label>
+            <label htmlFor="featuredImage" className="block mb-2">Featured Image</label>
             <input
+              id="featuredImage"
               type="file"
               accept="image/*,.webp"
               onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (file) {
                   const formData = new FormData();
-                  formData.append('image', file);
+                  formData.append("image", file);
                   try {
-                    const response = await fetch('/api/upload', {
-                      method: 'POST',
-                      body: formData
+                    const response = await fetch("/api/upload", {
+                      method: "POST",
+                      body: formData,
                     });
                     const { url } = await response.json();
-                    setValue('featuredImage', url);
-                  } catch (error) {
+                    setValue("featuredImage", url);
+                    toast({
+                      title: "Success",
+                      description: "Image uploaded successfully",
+                    });
+                  } catch (error: unknown) {
+                    const message = error instanceof Error ? error.message : "An unknown error occurred";
                     toast({
                       title: "Error",
-                      description: "Failed to upload image",
-                      variant: "destructive"
+                      description: message,
+                      variant: "destructive",
                     });
                   }
                 }
@@ -132,7 +159,9 @@ const CreateBlog = () => {
               {...register("content")}
               className="w-full p-2 bg-[#1a1a1a] rounded h-48"
             />
-            {errors.content && <p className="text-red-500">{errors.content.message}</p>}
+            {errors.content && (
+              <p className="text-red-500">{errors.content.message}</p>
+            )}
           </div>
 
           <div>
@@ -141,7 +170,9 @@ const CreateBlog = () => {
               {...register("excerpt")}
               className="w-full p-2 bg-[#1a1a1a] rounded"
             />
-            {errors.excerpt && <p className="text-red-500">{errors.excerpt.message}</p>}
+            {errors.excerpt && (
+              <p className="text-red-500">{errors.excerpt.message}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -151,7 +182,9 @@ const CreateBlog = () => {
                 {...register("metaTitle")}
                 className="w-full p-2 bg-[#1a1a1a] rounded"
               />
-              {errors.metaTitle && <p className="text-red-500">{errors.metaTitle.message}</p>}
+              {errors.metaTitle && (
+                <p className="text-red-500">{errors.metaTitle.message}</p>
+              )}
             </div>
 
             <div>
@@ -160,7 +193,9 @@ const CreateBlog = () => {
                 {...register("metaDescription")}
                 className="w-full p-2 bg-[#1a1a1a] rounded"
               />
-              {errors.metaDescription && <p className="text-red-500">{errors.metaDescription.message}</p>}
+              {errors.metaDescription && (
+                <p className="text-red-500">{errors.metaDescription.message}</p>
+              )}
             </div>
           </div>
 
@@ -170,23 +205,28 @@ const CreateBlog = () => {
               {...register("keywords")}
               className="w-full p-2 bg-[#1a1a1a] rounded"
             />
-            {errors.keywords && <p className="text-red-500">{errors.keywords.message}</p>}
+            {errors.keywords && (
+              <p className="text-red-500">{errors.keywords.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block mb-2">Category</label>
             <div className="flex gap-4">
               <select
-                {...register("categoryId", { 
-  required: "Please select a category",
-  valueAsNumber: true,
-  validate: value => !isNaN(value) || "Please select a valid category"
-})}
+                {...register("categoryId", {
+                  required: "Please select a category",
+                  valueAsNumber: true,
+                  validate: (value) =>
+                    !isNaN(value) || "Please select a valid category",
+                })}
                 className="w-full p-2 bg-[#1a1a1a] rounded"
               >
                 <option value="">Select category</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
                 ))}
               </select>
 
@@ -207,12 +247,15 @@ const CreateBlog = () => {
                 </button>
               </div>
             </div>
-            {errors.categoryId && <p className="text-red-500">{errors.categoryId.message}</p>}
+            {errors.categoryId && (
+              <p className="text-red-500">{errors.categoryId.message}</p>
+            )}
           </div>
 
           <div className="flex items-center gap-4">
             <button
               type="submit"
+              onClick={() => setValue("published", true)}
               className="px-6 py-2 bg-[#00ff4c] text-black rounded"
             >
               Publish

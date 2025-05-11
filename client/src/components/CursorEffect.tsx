@@ -5,6 +5,7 @@ const CursorEffect = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isScrolling, setIsScrolling] = useState(false);
   const [scrollTimeout, setScrollTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [cursorType, setCursorType] = useState<"default" | "pointer" | "text">("default");
 
   // Handle mouse movement
   useEffect(() => {
@@ -23,17 +24,17 @@ const CursorEffect = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolling(true);
-      
+
       // Clear previous timeout
       if (scrollTimeout) {
         clearTimeout(scrollTimeout);
       }
-      
+
       // Set new timeout to turn off the effect after scrolling stops
       const timeout = setTimeout(() => {
         setIsScrolling(false);
       }, 300);
-      
+
       setScrollTimeout(timeout);
     };
 
@@ -47,11 +48,33 @@ const CursorEffect = () => {
     };
   }, [scrollTimeout]);
 
+  // Handle cursor type changes
+  useEffect(() => {
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === "A" || target.tagName === "BUTTON") {
+        setCursorType("pointer");
+      } else if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+        setCursorType("text");
+      } else {
+        setCursorType("default");
+      }
+    };
+
+    window.addEventListener("mouseover", handleMouseOver);
+
+    return () => {
+      window.removeEventListener("mouseover", handleMouseOver);
+    };
+  }, []);
+
   return (
     <>
       {/* Custom cursor */}
       <motion.div
-        className="fixed w-8 h-8 rounded-full pointer-events-none z-50 mix-blend-difference"
+        className={`fixed w-8 h-8 rounded-full pointer-events-none z-50 mix-blend-difference ${
+          cursorType === "pointer" ? "cursor-pointer" : cursorType === "text" ? "cursor-text" : ""
+        }`}
         style={{
           backgroundColor: "#00ff4c",
           left: mousePosition.x - 16,
